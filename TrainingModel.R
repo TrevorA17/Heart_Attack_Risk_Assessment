@@ -75,4 +75,45 @@ rf_model_cv <- train(Risk_Level ~ Age + Gender + Heart_rate + Systolic_blood_pre
 # Print model results
 print(rf_model_cv)
 
+# Load necessary libraries
+library(caret)
+library(e1071)  # for SVM if not already installed
+
+# Set up 10-fold Cross-Validation
+ctrl <- trainControl(method = "cv", number = 10)
+
+# Random Forest Model
+set.seed(123)
+rf_model <- train(Risk_Level ~ Age + Gender + Heart_rate + Systolic_blood_pressure + 
+                    Diastolic_blood_pressure + Blood_sugar + CK_MB + Troponin + Result,
+                  data = HeartRiskData,
+                  method = "rf",
+                  trControl = ctrl)
+
+# Print Random Forest Results
+print(rf_model)
+
+
+# k-Nearest Neighbors Model
+set.seed(123)
+knn_model <- train(Risk_Level ~ Age + Gender + Heart_rate + Systolic_blood_pressure + 
+                     Diastolic_blood_pressure + Blood_sugar + CK_MB + Troponin + Result,
+                   data = HeartRiskData,
+                   method = "knn",
+                   trControl = ctrl)
+
+# Print KNN Results
+print(knn_model)
+
+
+# Support Vector Machine Model (Radial Basis Function Kernel)
+set.seed(123)
+svm_model <- train(Risk_Level ~ Age + Gender + Heart_rate + Systolic_blood_pressure + 
+                     Diastolic_blood_pressure + Blood_sugar + CK_MB + Troponin + Result,
+                   data = HeartRiskData,
+                   method = "svmRadial",
+                   trControl = ctrl)
+
+# Print SVM Results
+print(svm_model)
 
