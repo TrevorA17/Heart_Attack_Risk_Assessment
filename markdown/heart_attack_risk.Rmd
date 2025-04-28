@@ -1,0 +1,381 @@
+---
+title: "Heart Attack Risk Assessment"
+author: "Trevor Okinda"
+date: "2024"
+output:
+  github_document: 
+    toc: yes
+    toc_depth: 4
+    fig_width: 6
+    fig_height: 4
+    df_print: default
+editor_options:
+  chunk_output_type: console
+---
+
+# Student Details
+
+|                                              |     |
+|----------------------------------------------|-----|
+| **Student ID Number**                        | 134780 |
+| **Student Name**                             | Trevor Okinda |
+| **BBIT 4.2 Group**                           | C |
+| **Project Name**                             | Heart Attack Risk Assessment |
+
+# Setup Chunk
+
+**Note:** the following KnitR options have been set as the global defaults: <BR> `knitr::opts_chunk$set(echo = TRUE, warning = FALSE, eval = TRUE, collapse = FALSE, tidy = TRUE)`.
+
+More KnitR options are documented here <https://bookdown.org/yihui/rmarkdown-cookbook/chunk-options.html> and here <https://yihui.org/knitr/options/>.
+
+```{r setup, include=FALSE}
+library(formatR)
+knitr::opts_chunk$set(
+  warning = FALSE,
+  collapse = FALSE
+)
+```
+
+### Source: 
+
+The dataset that was used can be downloaded here: *\<https://www.kaggle.com/datasets/fajobgiua/heart-attack-risk-assessment-dataset/data\>*
+
+### Reference:
+
+*\<Job Giua Fa (2023). Heart Attack Risk Assessment Dataset. Kaggle. https://www.kaggle.com/datasets/fajobgiua/heart-attack-risk-assessment-dataset\>\
+Refer to the APA 7th edition manual for rules on how to cite datasets: <https://apastyle.apa.org/style-grammar-guidelines/references/examples/data-set-references>*
+
+
+# Understanding the Dataset (Exploratory Data Analysis (EDA))
+
+## Loading the Dataset
+```{r Loading the dataset}
+# Load dataset using read.csv
+HeartRiskData <- read.csv("Heart_Attack_Risk_Levels_Dataset.csv", colClasses = c(
+  Age = "numeric",
+  Gender = "factor",
+  Heart_rate = "numeric",
+  Systolic_blood_pressure = "numeric",
+  Diastolic_blood_pressure = "numeric",
+  Blood_sugar = "numeric",
+  CK_MB = "numeric",
+  Troponin = "numeric",
+  Result = "factor",
+  Risk_Level = "factor"
+))
+
+# Preview structure and first few rows
+str(HeartRiskData)
+head(HeartRiskData)
+View(HeartRiskData)
+```
+
+## Measures of Frequency
+```{r MOF}
+# Measures of Frequency
+# Frequency count for categorical variables (e.g., Gender, Result, Risk_Level)
+table(HeartRiskData$Gender)
+table(HeartRiskData$Result)
+table(HeartRiskData$Risk_Level)
+```
+
+## Measures of Central Tendency
+```{r MOCT}
+# Measures of Central Tendency
+# Mean, Median for numeric variables
+mean(HeartRiskData$Age, na.rm = TRUE)
+median(HeartRiskData$Age, na.rm = TRUE)
+
+mean(HeartRiskData$Heart_rate, na.rm = TRUE)
+median(HeartRiskData$Heart_rate, na.rm = TRUE)
+
+mean(HeartRiskData$Systolic_blood_pressure, na.rm = TRUE)
+median(HeartRiskData$Systolic_blood_pressure, na.rm = TRUE)
+
+mean(HeartRiskData$Diastolic_blood_pressure, na.rm = TRUE)
+median(HeartRiskData$Diastolic_blood_pressure, na.rm = TRUE)
+
+mean(HeartRiskData$Blood_sugar, na.rm = TRUE)
+median(HeartRiskData$Blood_sugar, na.rm = TRUE)
+
+mean(HeartRiskData$CK_MB, na.rm = TRUE)
+median(HeartRiskData$CK_MB, na.rm = TRUE)
+
+mean(HeartRiskData$Troponin, na.rm = TRUE)
+median(HeartRiskData$Troponin, na.rm = TRUE)
+```
+
+## Measures of Distribution
+```{r MOD}
+# Measures of Distribution
+# Standard Deviation and Range for numeric variables
+sd(HeartRiskData$Age, na.rm = TRUE)
+sd(HeartRiskData$Heart_rate, na.rm = TRUE)
+sd(HeartRiskData$Systolic_blood_pressure, na.rm = TRUE)
+sd(HeartRiskData$Diastolic_blood_pressure, na.rm = TRUE)
+sd(HeartRiskData$Blood_sugar, na.rm = TRUE)
+sd(HeartRiskData$CK_MB, na.rm = TRUE)
+sd(HeartRiskData$Troponin, na.rm = TRUE)
+
+# Range of variables
+range(HeartRiskData$Age, na.rm = TRUE)
+range(HeartRiskData$Heart_rate, na.rm = TRUE)
+range(HeartRiskData$Systolic_blood_pressure, na.rm = TRUE)
+range(HeartRiskData$Diastolic_blood_pressure, na.rm = TRUE)
+range(HeartRiskData$Blood_sugar, na.rm = TRUE)
+range(HeartRiskData$CK_MB, na.rm = TRUE)
+range(HeartRiskData$Troponin, na.rm = TRUE)
+
+```
+
+## Measures of Relationship
+```{r MOR}
+# Measures of Relationship
+# Correlation between numeric variables
+cor(HeartRiskData$Age, HeartRiskData$Heart_rate, use = "complete.obs")
+cor(HeartRiskData$Systolic_blood_pressure, HeartRiskData$Diastolic_blood_pressure, use = "complete.obs")
+cor(HeartRiskData$Blood_sugar, HeartRiskData$CK_MB, use = "complete.obs")
+cor(HeartRiskData$Troponin, HeartRiskData$Heart_rate, use = "complete.obs")
+
+# Cross-tabulation for categorical variables
+table(HeartRiskData$Result, HeartRiskData$Risk_Level)
+```
+
+## ANOVA
+```{r ANOVA}
+# ANOVA: Test if Age differs significantly across Risk_Level groups
+anova_age_risk <- aov(Age ~ Risk_Level, data = HeartRiskData)
+summary(anova_age_risk)
+
+# ANOVA: Test if Heart_rate differs significantly across Risk_Level groups
+anova_heart_rate_risk <- aov(Heart_rate ~ Risk_Level, data = HeartRiskData)
+summary(anova_heart_rate_risk)
+
+# ANOVA: Test if Systolic_blood_pressure differs significantly across Risk_Level groups
+anova_systolic_risk <- aov(Systolic_blood_pressure ~ Risk_Level, data = HeartRiskData)
+summary(anova_systolic_risk)
+
+# ANOVA: Test if Blood_sugar differs significantly across Risk_Level groups
+anova_blood_sugar_risk <- aov(Blood_sugar ~ Risk_Level, data = HeartRiskData)
+summary(anova_blood_sugar_risk)
+
+# ANOVA: Test if CK_MB differs significantly across Risk_Level groups
+anova_ck_mb_risk <- aov(CK_MB ~ Risk_Level, data = HeartRiskData)
+summary(anova_ck_mb_risk)
+
+# ANOVA: Test if Troponin differs significantly across Risk_Level groups
+anova_troponin_risk <- aov(Troponin ~ Risk_Level, data = HeartRiskData)
+summary(anova_troponin_risk)
+
+# Normality check
+plot(anova_age_risk, 2)  # Q-Q plot for Age vs Risk_Level
+
+# Homogeneity of variance
+bartlett.test(Age ~ Risk_Level, data = HeartRiskData)
+```
+
+## Plots
+```{r Plots}
+# Histogram for Age
+hist(HeartRiskData$Age, 
+     main = "Distribution of Age", 
+     xlab = "Age", 
+     col = "lightblue", 
+     border = "black")
+
+# Boxplot for Heart_rate
+boxplot(HeartRiskData$Heart_rate, 
+        main = "Heart Rate Distribution", 
+        ylab = "Heart Rate", 
+        col = "lightgreen")
+
+# Histogram for Systolic Blood Pressure
+hist(HeartRiskData$Systolic_blood_pressure, 
+     main = "Distribution of Systolic Blood Pressure", 
+     xlab = "Systolic Blood Pressure", 
+     col = "lightcoral", 
+     border = "black")
+
+# Bar plot for Risk_Level
+barplot(table(HeartRiskData$Risk_Level), 
+        main = "Distribution of Risk Level", 
+        xlab = "Risk Level", 
+        ylab = "Frequency", 
+        col = c("lightblue", "lightgreen", "lightcoral"))
+
+# Density plot for Blood_sugar
+plot(density(HeartRiskData$Blood_sugar), 
+     main = "Density Plot of Blood Sugar", 
+     xlab = "Blood Sugar", 
+     col = "purple")
+
+# Pairs plot for numeric variables
+pairs(HeartRiskData[, c("Age", "Heart_rate", "Systolic_blood_pressure", 
+                        "Diastolic_blood_pressure", "Blood_sugar", "CK_MB", "Troponin")], 
+      main = "Pairs Plot for Numeric Variables", 
+      pch = 19, col = HeartRiskData$Risk_Level)
+
+# Load necessary library for heatmap
+library(corrplot)
+
+# Calculate correlation matrix
+cor_matrix <- cor(HeartRiskData[, c("Age", "Heart_rate", "Systolic_blood_pressure", 
+                                    "Diastolic_blood_pressure", "Blood_sugar", "CK_MB", "Troponin")])
+
+# Plot the correlation matrix
+corrplot(cor_matrix, method = "circle", type = "upper", 
+         tl.col = "black", tl.srt = 45, 
+         main = "Correlation Matrix of Numeric Variables")
+
+# Scatter plot for Age vs Heart_rate, colored by Risk_Level
+plot(HeartRiskData$Age, HeartRiskData$Heart_rate, 
+     main = "Scatter Plot of Age vs Heart Rate", 
+     xlab = "Age", ylab = "Heart Rate", 
+     col = HeartRiskData$Risk_Level, pch = 19)
+legend("topright", legend = levels(HeartRiskData$Risk_Level), 
+       col = 1:length(levels(HeartRiskData$Risk_Level)), 
+       pch = 19)
+
+# Boxplot of Heart_rate by Risk_Level
+boxplot(Heart_rate ~ Risk_Level, data = HeartRiskData, 
+        main = "Heart Rate by Risk Level", 
+        xlab = "Risk Level", ylab = "Heart Rate", 
+        col = c("lightblue", "lightgreen", "lightcoral"))
+
+# Violin plot for Systolic_blood_pressure by Risk_Level
+library(ggplot2)
+ggplot(HeartRiskData, aes(x = Risk_Level, y = Systolic_blood_pressure, fill = Risk_Level)) +
+  geom_violin(trim = FALSE) +
+  labs(title = "Violin Plot of Systolic Blood Pressure by Risk Level",
+       x = "Risk Level", y = "Systolic Blood Pressure") +
+  theme_minimal()
+
+
+```
+
+# Preprocessing and Data Transformation
+## Missing Values
+```{r Missing Values}
+# Check if there are any missing values in the entire dataset
+missing_values <- sum(is.na(HeartRiskData))
+cat("Total missing values in the dataset:", missing_values, "\n")
+
+# Check for missing values by column
+missing_values_by_column <- colSums(is.na(HeartRiskData))
+cat("Missing values by column:\n")
+print(missing_values_by_column)
+
+# Install and load VIM package for visualization
+library(VIM)
+
+# Visualize missing data pattern
+aggr(HeartRiskData, col = c("navy", "yellow"), numbers = TRUE, sortVars = TRUE, 
+     labels = names(HeartRiskData), cex.axis = 0.7, gap = 3, ylab = c("Missing data", "Frequency"))
+```
+
+# Training Model
+## Data Splitting
+```{r Data Splitting}
+# Load necessary library
+library(caret)
+
+# Set the seed for reproducibility
+set.seed(123)
+
+# Split the dataset into training (80%) and testing (20%) sets
+train_index <- createDataPartition(HeartRiskData$Risk_Level, p = 0.8, list = FALSE)
+
+# Create training and testing datasets
+train_data <- HeartRiskData[train_index, ]
+test_data <- HeartRiskData[-train_index, ]
+
+# Check the dimensions of the training and testing datasets
+cat("Training data dimensions:", dim(train_data), "\n")
+cat("Testing data dimensions:", dim(test_data), "\n")
+```
+
+## Cross-validation
+```{r Cross-validation}
+# Load the caret package
+library(caret)
+
+# Set up 10-fold Cross-Validation
+ctrl_10fold <- trainControl(method = "cv", number = 10)
+
+
+# Train a model using Random Forest with 10-fold CV
+rf_model_cv <- train(Risk_Level ~ Age + Gender + Heart_rate + Systolic_blood_pressure + Diastolic_blood_pressure + 
+                       Blood_sugar + CK_MB + Troponin + Result, 
+                     data = HeartRiskData, 
+                     method = "rf", 
+                     trControl = ctrl_10fold)
+
+# Print model results
+print(rf_model_cv)
+```
+
+## Training Different Models
+```{r Different Models}
+# Load necessary libraries
+library(caret)
+library(e1071)  # for SVM if not already installed
+
+# Set up 10-fold Cross-Validation
+ctrl <- trainControl(method = "cv", number = 10)
+
+# Random Forest Model
+set.seed(123)
+rf_model <- train(Risk_Level ~ Age + Gender + Heart_rate + Systolic_blood_pressure + 
+                    Diastolic_blood_pressure + Blood_sugar + CK_MB + Troponin + Result,
+                  data = HeartRiskData,
+                  method = "rf",
+                  trControl = ctrl)
+
+# Print Random Forest Results
+print(rf_model)
+
+
+# k-Nearest Neighbors Model
+set.seed(123)
+knn_model <- train(Risk_Level ~ Age + Gender + Heart_rate + Systolic_blood_pressure + 
+                     Diastolic_blood_pressure + Blood_sugar + CK_MB + Troponin + Result,
+                   data = HeartRiskData,
+                   method = "knn",
+                   trControl = ctrl)
+
+# Print KNN Results
+print(knn_model)
+
+
+# Support Vector Machine Model (Radial Basis Function Kernel)
+set.seed(123)
+svm_model <- train(Risk_Level ~ Age + Gender + Heart_rate + Systolic_blood_pressure + 
+                     Diastolic_blood_pressure + Blood_sugar + CK_MB + Troponin + Result,
+                   data = HeartRiskData,
+                   method = "svmRadial",
+                   trControl = ctrl)
+
+# Print SVM Results
+print(svm_model)
+```
+
+## Performance Comparison
+```{r Performance Comparison}
+# Load caret if not already loaded
+library(caret)
+
+# Compare the three models using resamples
+model_comparison <- resamples(list(
+  RandomForest = rf_model,
+  KNN = knn_model,
+  SVM = svm_model
+))
+
+# Summary of the model performance metrics
+summary(model_comparison)
+
+# Visual comparison plots
+bwplot(model_comparison)   # Boxplot of accuracy, kappa, etc.
+dotplot(model_comparison)  # Dotplot comparison
+```
+
