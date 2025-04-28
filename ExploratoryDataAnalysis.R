@@ -138,3 +138,44 @@ plot(density(HeartRiskData$Blood_sugar),
      xlab = "Blood Sugar", 
      col = "purple")
 
+# Pairs plot for numeric variables
+pairs(HeartRiskData[, c("Age", "Heart_rate", "Systolic_blood_pressure", 
+                        "Diastolic_blood_pressure", "Blood_sugar", "CK_MB", "Troponin")], 
+      main = "Pairs Plot for Numeric Variables", 
+      pch = 19, col = HeartRiskData$Risk_Level)
+
+# Load necessary library for heatmap
+library(corrplot)
+
+# Calculate correlation matrix
+cor_matrix <- cor(HeartRiskData[, c("Age", "Heart_rate", "Systolic_blood_pressure", 
+                                    "Diastolic_blood_pressure", "Blood_sugar", "CK_MB", "Troponin")])
+
+# Plot the correlation matrix
+corrplot(cor_matrix, method = "circle", type = "upper", 
+         tl.col = "black", tl.srt = 45, 
+         main = "Correlation Matrix of Numeric Variables")
+
+# Scatter plot for Age vs Heart_rate, colored by Risk_Level
+plot(HeartRiskData$Age, HeartRiskData$Heart_rate, 
+     main = "Scatter Plot of Age vs Heart Rate", 
+     xlab = "Age", ylab = "Heart Rate", 
+     col = HeartRiskData$Risk_Level, pch = 19)
+legend("topright", legend = levels(HeartRiskData$Risk_Level), 
+       col = 1:length(levels(HeartRiskData$Risk_Level)), 
+       pch = 19)
+
+# Boxplot of Heart_rate by Risk_Level
+boxplot(Heart_rate ~ Risk_Level, data = HeartRiskData, 
+        main = "Heart Rate by Risk Level", 
+        xlab = "Risk Level", ylab = "Heart Rate", 
+        col = c("lightblue", "lightgreen", "lightcoral"))
+
+# Violin plot for Systolic_blood_pressure by Risk_Level
+library(ggplot2)
+ggplot(HeartRiskData, aes(x = Risk_Level, y = Systolic_blood_pressure, fill = Risk_Level)) +
+  geom_violin(trim = FALSE) +
+  labs(title = "Violin Plot of Systolic Blood Pressure by Risk Level",
+       x = "Risk Level", y = "Systolic Blood Pressure") +
+  theme_minimal()
+
