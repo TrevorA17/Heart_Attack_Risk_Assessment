@@ -105,3 +105,36 @@ plot(anova_age_risk, 2)  # Q-Q plot for Age vs Risk_Level
 # Homogeneity of variance
 bartlett.test(Age ~ Risk_Level, data = HeartRiskData)
 
+# Histogram for Age
+hist(HeartRiskData$Age, 
+     main = "Distribution of Age", 
+     xlab = "Age", 
+     col = "lightblue", 
+     border = "black")
+
+# Boxplot for Heart_rate
+boxplot(HeartRiskData$Heart_rate, 
+        main = "Heart Rate Distribution", 
+        ylab = "Heart Rate", 
+        col = "lightgreen")
+
+# Histogram for Systolic Blood Pressure
+hist(HeartRiskData$Systolic_blood_pressure, 
+     main = "Distribution of Systolic Blood Pressure", 
+     xlab = "Systolic Blood Pressure", 
+     col = "lightcoral", 
+     border = "black")
+
+# Bar plot for Risk_Level
+barplot(table(HeartRiskData$Risk_Level), 
+        main = "Distribution of Risk Level", 
+        xlab = "Risk Level", 
+        ylab = "Frequency", 
+        col = c("lightblue", "lightgreen", "lightcoral"))
+
+# Density plot for Blood_sugar
+plot(density(HeartRiskData$Blood_sugar), 
+     main = "Density Plot of Blood Sugar", 
+     xlab = "Blood Sugar", 
+     col = "purple")
+
