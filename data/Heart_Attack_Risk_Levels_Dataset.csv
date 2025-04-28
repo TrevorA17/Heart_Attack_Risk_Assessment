@@ -1,4 +1,4 @@
-Age,Gender,Heart rate,Systolic blood pressure,Diastolic blood pressure,Blood sugar,CK-MB,Troponin,Result,Risk_Level
+Age,Gender,Heart_rate,Systolic_blood_pressure,Diastolic_blood_pressure,Blood_sugar,CK_MB,Troponin,Result,Risk_Level
 63,1,66,160,83,160,1.8,0.012,negative,Moderate
 20,1,94,98,46,296,6.75,1.06,positive,High
 56,1,64,160,77,270,1.99,0.003,negative,Moderate
