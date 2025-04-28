@@ -117,3 +117,20 @@ svm_model <- train(Risk_Level ~ Age + Gender + Heart_rate + Systolic_blood_press
 # Print SVM Results
 print(svm_model)
 
+# Load caret if not already loaded
+library(caret)
+
+# Compare the three models using resamples
+model_comparison <- resamples(list(
+  RandomForest = rf_model,
+  KNN = knn_model,
+  SVM = svm_model
+))
+
+# Summary of the model performance metrics
+summary(model_comparison)
+
+# Visual comparison plots
+bwplot(model_comparison)   # Boxplot of accuracy, kappa, etc.
+dotplot(model_comparison)  # Dotplot comparison
+
