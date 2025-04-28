@@ -58,3 +58,21 @@ boot_results <- boot(data = HeartRiskData, statistic = boot_function, R = 1000)
 # Print bootstrapping results
 print(boot_results)
 
+# Load the caret package
+library(caret)
+
+# Set up 10-fold Cross-Validation
+ctrl_10fold <- trainControl(method = "cv", number = 10)
+
+
+# Train a model using Random Forest with 10-fold CV
+rf_model_cv <- train(Risk_Level ~ Age + Gender + Heart_rate + Systolic_blood_pressure + Diastolic_blood_pressure + 
+                       Blood_sugar + CK_MB + Troponin + Result, 
+                     data = HeartRiskData, 
+                     method = "rf", 
+                     trControl = ctrl_10fold)
+
+# Print model results
+print(rf_model_cv)
+
+
