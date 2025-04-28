@@ -75,3 +75,33 @@ cor(HeartRiskData$Troponin, HeartRiskData$Heart_rate, use = "complete.obs")
 # Cross-tabulation for categorical variables
 table(HeartRiskData$Result, HeartRiskData$Risk_Level)
 
+# ANOVA: Test if Age differs significantly across Risk_Level groups
+anova_age_risk <- aov(Age ~ Risk_Level, data = HeartRiskData)
+summary(anova_age_risk)
+
+# ANOVA: Test if Heart_rate differs significantly across Risk_Level groups
+anova_heart_rate_risk <- aov(Heart_rate ~ Risk_Level, data = HeartRiskData)
+summary(anova_heart_rate_risk)
+
+# ANOVA: Test if Systolic_blood_pressure differs significantly across Risk_Level groups
+anova_systolic_risk <- aov(Systolic_blood_pressure ~ Risk_Level, data = HeartRiskData)
+summary(anova_systolic_risk)
+
+# ANOVA: Test if Blood_sugar differs significantly across Risk_Level groups
+anova_blood_sugar_risk <- aov(Blood_sugar ~ Risk_Level, data = HeartRiskData)
+summary(anova_blood_sugar_risk)
+
+# ANOVA: Test if CK_MB differs significantly across Risk_Level groups
+anova_ck_mb_risk <- aov(CK_MB ~ Risk_Level, data = HeartRiskData)
+summary(anova_ck_mb_risk)
+
+# ANOVA: Test if Troponin differs significantly across Risk_Level groups
+anova_troponin_risk <- aov(Troponin ~ Risk_Level, data = HeartRiskData)
+summary(anova_troponin_risk)
+
+# Normality check
+plot(anova_age_risk, 2)  # Q-Q plot for Age vs Risk_Level
+
+# Homogeneity of variance
+bartlett.test(Age ~ Risk_Level, data = HeartRiskData)
+
