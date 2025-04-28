@@ -16,6 +16,15 @@ Trevor Okinda
   - [Measures of Relationship](#measures-of-relationship)
   - [ANOVA](#anova)
   - [Plots](#plots)
+- [Preprocessing and Data
+  Transformation](#preprocessing-and-data-transformation)
+  - [Missing Values](#missing-values)
+- [Training Model](#training-model)
+  - [Data Splitting](#data-splitting)
+  - [Cross-validation](#cross-validation)
+  - [Training Different Models](#training-different-models)
+  - [Performance Comparison](#performance-comparison)
+  - [Saving Model](#saving-model)
 
 # Student Details
 
@@ -561,3 +570,353 @@ ggplot(HeartRiskData, aes(x = Risk_Level, y = Systolic_blood_pressure, fill = Ri
 ```
 
 ![](heart_attack_risk_files/figure-gfm/Plots-10.png)<!-- -->
+
+# Preprocessing and Data Transformation
+
+## Missing Values
+
+``` r
+# Check if there are any missing values in the entire dataset
+missing_values <- sum(is.na(HeartRiskData))
+cat("Total missing values in the dataset:", missing_values, "\n")
+```
+
+    ## Total missing values in the dataset: 0
+
+``` r
+# Check for missing values by column
+missing_values_by_column <- colSums(is.na(HeartRiskData))
+cat("Missing values by column:\n")
+```
+
+    ## Missing values by column:
+
+``` r
+print(missing_values_by_column)
+```
+
+    ##                      Age                   Gender               Heart_rate 
+    ##                        0                        0                        0 
+    ##  Systolic_blood_pressure Diastolic_blood_pressure              Blood_sugar 
+    ##                        0                        0                        0 
+    ##                    CK_MB                 Troponin                   Result 
+    ##                        0                        0                        0 
+    ##               Risk_Level 
+    ##                        0
+
+``` r
+# Install and load VIM package for visualization
+library(VIM)
+```
+
+    ## Loading required package: colorspace
+
+    ## Loading required package: grid
+
+    ## The legacy packages maptools, rgdal, and rgeos, underpinning the sp package,
+    ## which was just loaded, will retire in October 2023.
+    ## Please refer to R-spatial evolution reports for details, especially
+    ## https://r-spatial.org/r/2023/05/15/evolution4.html.
+    ## It may be desirable to make the sf package available;
+    ## package maintainers should consider adding sf to Suggests:.
+    ## The sp package is now running under evolution status 2
+    ##      (status 2 uses the sf package in place of rgdal)
+
+    ## VIM is ready to use.
+
+    ## Suggestions and bug-reports can be submitted at: https://github.com/statistikat/VIM/issues
+
+    ## 
+    ## Attaching package: 'VIM'
+
+    ## The following object is masked from 'package:datasets':
+    ## 
+    ##     sleep
+
+``` r
+# Visualize missing data pattern
+aggr(HeartRiskData, col = c("navy", "yellow"), numbers = TRUE, sortVars = TRUE, 
+     labels = names(HeartRiskData), cex.axis = 0.7, gap = 3, ylab = c("Missing data", "Frequency"))
+```
+
+![](heart_attack_risk_files/figure-gfm/Missing%20Values-1.png)<!-- -->
+
+    ## 
+    ##  Variables sorted by number of missings: 
+    ##                  Variable Count
+    ##                       Age     0
+    ##                    Gender     0
+    ##                Heart_rate     0
+    ##   Systolic_blood_pressure     0
+    ##  Diastolic_blood_pressure     0
+    ##               Blood_sugar     0
+    ##                     CK_MB     0
+    ##                  Troponin     0
+    ##                    Result     0
+    ##                Risk_Level     0
+
+# Training Model
+
+## Data Splitting
+
+``` r
+# Load necessary library
+library(caret)
+```
+
+    ## Loading required package: lattice
+
+``` r
+# Set the seed for reproducibility
+set.seed(123)
+
+# Split the dataset into training (80%) and testing (20%) sets
+train_index <- createDataPartition(HeartRiskData$Risk_Level, p = 0.8, list = FALSE)
+
+# Create training and testing datasets
+train_data <- HeartRiskData[train_index, ]
+test_data <- HeartRiskData[-train_index, ]
+
+# Check the dimensions of the training and testing datasets
+cat("Training data dimensions:", dim(train_data), "\n")
+```
+
+    ## Training data dimensions: 1056 10
+
+``` r
+cat("Testing data dimensions:", dim(test_data), "\n")
+```
+
+    ## Testing data dimensions: 263 10
+
+## Cross-validation
+
+``` r
+# Load the caret package
+library(caret)
+
+# Set up 10-fold Cross-Validation
+ctrl_10fold <- trainControl(method = "cv", number = 10)
+
+
+# Train a model using Random Forest with 10-fold CV
+rf_model_cv <- train(Risk_Level ~ Age + Gender + Heart_rate + Systolic_blood_pressure + Diastolic_blood_pressure + 
+                       Blood_sugar + CK_MB + Troponin + Result, 
+                     data = HeartRiskData, 
+                     method = "rf", 
+                     trControl = ctrl_10fold)
+
+# Print model results
+print(rf_model_cv)
+```
+
+    ## Random Forest 
+    ## 
+    ## 1319 samples
+    ##    9 predictor
+    ##    3 classes: 'High', 'Low', 'Moderate' 
+    ## 
+    ## No pre-processing
+    ## Resampling: Cross-Validated (10 fold) 
+    ## Summary of sample sizes: 1186, 1186, 1187, 1188, 1187, 1187, ... 
+    ## Resampling results across tuning parameters:
+    ## 
+    ##   mtry  Accuracy   Kappa    
+    ##   2     0.9977272  0.9958478
+    ##   5     0.9977272  0.9958478
+    ##   9     0.9984848  0.9972368
+    ## 
+    ## Accuracy was used to select the optimal model using the largest value.
+    ## The final value used for the model was mtry = 9.
+
+## Training Different Models
+
+``` r
+# Load necessary libraries
+library(caret)
+library(e1071)  # for SVM if not already installed
+
+# Set up 10-fold Cross-Validation
+ctrl <- trainControl(method = "cv", number = 10)
+
+# Random Forest Model
+set.seed(123)
+rf_model <- train(Risk_Level ~ Age + Gender + Heart_rate + Systolic_blood_pressure + 
+                    Diastolic_blood_pressure + Blood_sugar + CK_MB + Troponin + Result,
+                  data = HeartRiskData,
+                  method = "rf",
+                  trControl = ctrl)
+
+# Print Random Forest Results
+print(rf_model)
+```
+
+    ## Random Forest 
+    ## 
+    ## 1319 samples
+    ##    9 predictor
+    ##    3 classes: 'High', 'Low', 'Moderate' 
+    ## 
+    ## No pre-processing
+    ## Resampling: Cross-Validated (10 fold) 
+    ## Summary of sample sizes: 1186, 1188, 1186, 1187, 1187, 1187, ... 
+    ## Resampling results across tuning parameters:
+    ## 
+    ##   mtry  Accuracy   Kappa    
+    ##   2     0.9969695  0.9944583
+    ##   5     0.9977329  0.9958611
+    ##   9     0.9984848  0.9972368
+    ## 
+    ## Accuracy was used to select the optimal model using the largest value.
+    ## The final value used for the model was mtry = 9.
+
+``` r
+# k-Nearest Neighbors Model
+set.seed(123)
+knn_model <- train(Risk_Level ~ Age + Gender + Heart_rate + Systolic_blood_pressure + 
+                     Diastolic_blood_pressure + Blood_sugar + CK_MB + Troponin + Result,
+                   data = HeartRiskData,
+                   method = "knn",
+                   trControl = ctrl)
+
+# Print KNN Results
+print(knn_model)
+```
+
+    ## k-Nearest Neighbors 
+    ## 
+    ## 1319 samples
+    ##    9 predictor
+    ##    3 classes: 'High', 'Low', 'Moderate' 
+    ## 
+    ## No pre-processing
+    ## Resampling: Cross-Validated (10 fold) 
+    ## Summary of sample sizes: 1186, 1188, 1186, 1187, 1187, 1187, ... 
+    ## Resampling results across tuning parameters:
+    ## 
+    ##   k  Accuracy   Kappa    
+    ##   5  0.6322913  0.3066309
+    ##   7  0.6345351  0.2932251
+    ##   9  0.6306210  0.2811498
+    ## 
+    ## Accuracy was used to select the optimal model using the largest value.
+    ## The final value used for the model was k = 7.
+
+``` r
+# Support Vector Machine Model (Radial Basis Function Kernel)
+set.seed(123)
+svm_model <- train(Risk_Level ~ Age + Gender + Heart_rate + Systolic_blood_pressure + 
+                     Diastolic_blood_pressure + Blood_sugar + CK_MB + Troponin + Result,
+                   data = HeartRiskData,
+                   method = "svmRadial",
+                   trControl = ctrl)
+
+# Print SVM Results
+print(svm_model)
+```
+
+    ## Support Vector Machines with Radial Basis Function Kernel 
+    ## 
+    ## 1319 samples
+    ##    9 predictor
+    ##    3 classes: 'High', 'Low', 'Moderate' 
+    ## 
+    ## No pre-processing
+    ## Resampling: Cross-Validated (10 fold) 
+    ## Summary of sample sizes: 1186, 1188, 1186, 1187, 1187, 1187, ... 
+    ## Resampling results across tuning parameters:
+    ## 
+    ##   C     Accuracy   Kappa    
+    ##   0.25  0.9727146  0.9500219
+    ##   0.50  0.9742241  0.9528134
+    ##   1.00  0.9787869  0.9612199
+    ## 
+    ## Tuning parameter 'sigma' was held constant at a value of 0.112675
+    ## Accuracy was used to select the optimal model using the largest value.
+    ## The final values used for the model were sigma = 0.112675 and C = 1.
+
+## Performance Comparison
+
+``` r
+# Load caret if not already loaded
+library(caret)
+
+# Compare the three models using resamples
+model_comparison <- resamples(list(
+  RandomForest = rf_model,
+  KNN = knn_model,
+  SVM = svm_model
+))
+
+# Summary of the model performance metrics
+summary(model_comparison)
+```
+
+    ## 
+    ## Call:
+    ## summary.resamples(object = model_comparison)
+    ## 
+    ## Models: RandomForest, KNN, SVM 
+    ## Number of resamples: 10 
+    ## 
+    ## Accuracy 
+    ##                   Min.   1st Qu.    Median      Mean   3rd Qu.      Max. NA's
+    ## RandomForest 0.9923664 1.0000000 1.0000000 0.9984848 1.0000000 1.0000000    0
+    ## KNN          0.6015038 0.6106870 0.6377307 0.6345351 0.6591194 0.6666667    0
+    ## SVM          0.9473684 0.9770992 0.9811460 0.9787869 0.9848485 0.9924812    0
+    ## 
+    ## Kappa 
+    ##                   Min.   1st Qu.    Median      Mean   3rd Qu.      Max. NA's
+    ## RandomForest 0.9860579 1.0000000 1.0000000 0.9972368 1.0000000 1.0000000    0
+    ## KNN          0.2211910 0.2434347 0.3077199 0.2932251 0.3272322 0.3786906    0
+    ## SVM          0.9043460 0.9577209 0.9657313 0.9612199 0.9723560 0.9862276    0
+
+``` r
+# Visual comparison plots
+bwplot(model_comparison)   # Boxplot of accuracy, kappa, etc.
+```
+
+![](heart_attack_risk_files/figure-gfm/Performance%20Comparison-1.png)<!-- -->
+
+``` r
+dotplot(model_comparison)  # Dotplot comparison
+```
+
+![](heart_attack_risk_files/figure-gfm/Performance%20Comparison-2.png)<!-- -->
+
+## Saving Model
+
+``` r
+# Create a folder if it doesn't exist
+if (!dir.exists("./models")) {
+  dir.create("./models")
+}
+
+# Save the best model (Random Forest)
+saveRDS(rf_model, "./models/best_rf_model.rds")
+
+# To load the saved model later
+loaded_best_rf_model <- readRDS("./models/best_rf_model.rds")
+
+# Example of making a prediction with the loaded model
+new_data <- data.frame(
+  Age = 55,
+  Gender = factor(1, levels = levels(HeartRiskData$Gender)),
+  Heart_rate = 72,
+  Systolic_blood_pressure = 140,
+  Diastolic_blood_pressure = 85,
+  Blood_sugar = 180,
+  CK_MB = 2.5,
+  Troponin = 0.05,
+  Result = factor("negative", levels = levels(HeartRiskData$Result))
+)
+
+# Predict the Risk_Level
+predicted_risk <- predict(loaded_best_rf_model, newdata = new_data)
+
+# Print the prediction
+print(predicted_risk)
+```
+
+    ## [1] Low
+    ## Levels: High Low Moderate
