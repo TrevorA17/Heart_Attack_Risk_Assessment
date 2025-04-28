@@ -1,5 +1,3 @@
-# plumber.R
-
 # Load the saved Random Forest model
 loaded_best_rf_model <- readRDS("./models/best_rf_model.rds")
 
