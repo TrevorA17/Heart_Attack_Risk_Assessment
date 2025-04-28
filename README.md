@@ -1,2 +1,2 @@
-# Heart_Attack_Risk_Assessment
+# Heart Attack Risk Assessment
 Using vitals and biomarkers to assess heart attack risk levels.
