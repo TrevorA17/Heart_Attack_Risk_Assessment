@@ -1,2 +1,3 @@
 # Heart Attack Risk Assessment
-Using vitals and biomarkers to assess heart attack risk levels.
+This project focuses on predicting heart attack risk levels using a supervised machine learning approach. We utilized a publicly available dataset containing medical and clinical features such as age, gender, heart rate, blood pressure readings, blood sugar levels, CK-MB, and troponin measurements. After thorough exploratory data analysis, statistical testing, and visualizations, we trained and evaluated multiple classification models — including Random Forest, k-Nearest Neighbors (KNN), and Support Vector Machine (SVM). Cross-validation techniques were applied to ensure robust model performance. The best-performing model was deployed through a Plumber API, enabling real-time heart risk level predictions based on new patient input data. This project demonstrates the practical use of machine learning for healthcare risk assessment.
+
